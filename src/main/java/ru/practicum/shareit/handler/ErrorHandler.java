@@ -10,8 +10,6 @@ import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.handler.exception.OwnerException;
 import ru.practicum.shareit.handler.exception.ValidationException;
 
-import javax.validation.constraints.Email;
-
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {

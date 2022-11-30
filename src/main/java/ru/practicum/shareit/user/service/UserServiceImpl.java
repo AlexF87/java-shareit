@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserDao userDao;
+
     @Override
     public UserDto getUser(Long userId) {
         return UserMapper.toUserDto(userDao.getUserById(userId));
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailException(String.format("A user with such an  email %s already exists",
                     userDto.getEmail()));
         }
-            User user = UserMapper.toUser(userDto);
+        User user = UserMapper.toUser(userDto);
         return UserMapper.toUserDto(userDao.createUser(user));
     }
 

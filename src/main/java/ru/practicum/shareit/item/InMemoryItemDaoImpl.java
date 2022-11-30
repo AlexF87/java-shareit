@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class InMemoryItemDaoImpl implements ItemDao{
+public class InMemoryItemDaoImpl implements ItemDao {
 
     private final Map<Long, Item> items = new HashMap<>();
     private static long idCounter = 0L;
