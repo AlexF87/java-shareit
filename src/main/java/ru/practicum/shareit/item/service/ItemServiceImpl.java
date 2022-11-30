@@ -2,15 +2,16 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.OwnerException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.handler.exception.NotFoundException;
+import ru.practicum.shareit.handler.exception.OwnerException;
+import ru.practicum.shareit.handler.exception.ValidationException;
 import ru.practicum.shareit.item.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -66,12 +67,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> searchItem(String text) {
+        if (text.isEmpty()) {
+            return new ArrayList<>();
+        }
         return itemDao.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     private void checkItemValid(ItemDto itemDto) {
-        if (itemDto.getName().isEmpty() || itemDto.getName() == null || itemDto.getDescription().isEmpty()
-        || itemDto.getDescription() == null || itemDto.getAvailable() == null) {
+        if (itemDto.getName() == null || itemDto.getName().isEmpty() || itemDto.getDescription() == null ||
+                itemDto.getDescription().isEmpty() || itemDto.getAvailable() == null) {
             throw new ValidationException(String.format("Validation error itemDto name: %s description: %s available:" +
                     " " +
                     "%b", itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable()));

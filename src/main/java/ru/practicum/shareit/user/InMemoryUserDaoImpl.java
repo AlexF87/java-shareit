@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.handler.exception.NotFoundException;
 
 import java.util.Collection;
 import java.util.HashMap;
