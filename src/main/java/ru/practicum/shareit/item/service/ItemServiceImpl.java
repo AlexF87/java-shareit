@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.OwnerException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -34,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> getAllItems(Long userId) {
-        return itemDao.getAllItems(useId)
+        return itemDao.getAllItems(userId)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -47,7 +49,7 @@ public class ItemServiceImpl implements ItemService {
         if (item == null) {
             throw new NotFoundException(String.format("No item with id: %d  +", itemId));
         }
-        if (!itemDao.getItem(itemId).getOwner.equals(userId)) {
+        if (!itemDao.getItem(itemId).getOwner().equals(userId)) {
             throw new OwnerException(String.format("This user don't owner"));
         }
         if (itemDto.getName() != null) {
@@ -59,12 +61,12 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        return ItemMapper.toItemDto(itemDao.updateItem(itemid, item));
+        return ItemMapper.toItemDto(itemDao.updateItem(itemId, item));
     }
 
     @Override
     public Collection<ItemDto> searchItem(String text) {
-        return itemDao.search(text);
+        return itemDao.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     private void checkItemValid(ItemDto itemDto) {

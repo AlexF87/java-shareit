@@ -45,7 +45,11 @@ public class UserServiceImpl implements UserService {
             userDB.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
-            userDB.setEmail(userDto.getEmail());
+            if (!checkUserMailForUniqueness(userDto.getEmail())) {
+                userDB.setEmail(userDto.getEmail());
+            } else {
+                throw new ValidationException(String.format("Email: %s already exists", userDto.getEmail()));
+            }
         }
         return UserMapper.toUserDto(userDao.update(userId, userDB));
     }
