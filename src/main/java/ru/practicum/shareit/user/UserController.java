@@ -2,8 +2,11 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import java.util.Collection;
 
 /**
  * TODO Sprint add-controllers.
@@ -35,7 +38,7 @@ public class UserController {
     }
 
     @PatchMapping("/id")
-    public UserDto updateUser(@PatchVariable Long id, @RequestBody UserDto userDto) {
-        return service.updateUser(id, user);
+    public UserDto updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+        return service.updateUser(id, userDto);
     }
 }
