@@ -46,7 +46,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
         Item item = itemDao.getItem(itemId);
-
         if (item == null) {
             throw new NotFoundException(String.format("No item with id: %d  +", itemId));
         }
@@ -80,5 +79,11 @@ public class ItemServiceImpl implements ItemService {
                     " " +
                     "%b", itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable()));
         }
+    }
+
+    @Override
+    public Item getByIdOrNotFoundError(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException(String.format("Not found item %d" , itemId)));
     }
 }

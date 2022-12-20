@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.handler.exception.EmailException;
-import ru.practicum.shareit.handler.exception.NotFoundException;
-import ru.practicum.shareit.handler.exception.OwnerException;
-import ru.practicum.shareit.handler.exception.ValidationException;
+import ru.practicum.shareit.handler.exception.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -39,6 +36,13 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleEmailException(final EmailException e) {
         log.info("Error 409 {}", e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public ErrorResponse handleBadRequestException(BadRequestException e) {
+        log.info("Error 400 {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 

@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.handler.exception.EmailException;
+import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDao;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -56,6 +57,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(Long userId) {
         userDao.deleteUser(userId);
+    }
+
+    @Override
+    public User getByIdOrNotFoundError(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("Not found user, id: %d ", userId)));
     }
 
     private boolean checkUserMailForUniqueness(String email) {

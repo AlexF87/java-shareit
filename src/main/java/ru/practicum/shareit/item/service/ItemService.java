@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import ru.practicum.shareit.item.dto.ItemDto;
-
+import ru.practicum.shareit.item.model.Item;
 import java.util.Collection;
 
 public interface ItemService {
@@ -14,4 +14,7 @@ public interface ItemService {
     ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto);
 
     Collection<ItemDto> searchItem(String text);
+
+    Item getByIdOrNotFoundError(Long itemId);
+
 }
