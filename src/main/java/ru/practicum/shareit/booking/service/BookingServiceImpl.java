@@ -1,11 +1,17 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoForItem;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.handler.exception.*;
@@ -19,22 +25,32 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
-@AllArgsConstructor
+@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService{
     private final BookingRepository bookingRepository;
     private final ItemService itemService;
-    private final BookingMapper mapper;
     private final UserService userService;
+    @Autowired
+    public BookingServiceImpl(BookingRepository bookingRepository, @Lazy ItemService itemService,
+                              UserService userService) {
+        this.bookingRepository = bookingRepository;
+        this.itemService = itemService;
+        this.userService = userService;
+    }
 
     @Override
+    @Transactional
     public BookingDtoInfo create(BookingDto bookingDto, Long bookerId) {
         checkBooking(bookingDto, bookerId);
-        Booking booking = mapper.toBooking(bookingDto, bookerId);
+        Item item = itemService.getByIdOrNotFoundError(bookingDto.getItemId());
+        User booker = userService.getByIdOrNotFoundError(bookerId);
+        Booking booking = BookingMapper.toBooking(bookingDto, item, booker);
         booking.setStatus(BookingStatus.WAITING);
         return BookingMapper.toBookingDtoInfo(bookingRepository.save(booking));
     }
 
     @Override
+    @Transactional
     public BookingDtoInfo approve(Long bookingId, Long ownerId, Boolean approved) {
         Booking booking = getByIdOrNotFoundError(bookingId);
         userService.getByIdOrNotFoundError(ownerId);
@@ -77,14 +93,16 @@ public class BookingServiceImpl implements BookingService{
                 bookings = bookingRepository.findByBooker_IdOrderByEndDesc(userId);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByBooker_IdAndDateCurrent(userId, LocalDateTime.now());
+                bookings =
+                        bookingRepository.findByBooker_IdAndStartLessThanEqualAndEndGreaterThanOrderByEndDesc
+                                (userId, LocalDateTime.now(),LocalDateTime.now());
                 break;
             case PAST:
                 bookings =  bookingRepository.findAllByBooker_IdAndEndBeforeOrderByStartDesc(userId,
                         LocalDateTime.now());
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByBooker_IdAndStartGreaterThanOrderByEndDesc(userId,
+                bookings = bookingRepository.findByBooker_IdAndStartAfterOrderByEndDesc(userId,
                         LocalDateTime.now());
                 break;
             case WAITING:
@@ -96,7 +114,7 @@ public class BookingServiceImpl implements BookingService{
                         BookingStatus.REJECTED);
                 break;
             default:
-                throw new BadRequestException(String.format("Unknown status %s", state.toString()));
+                throw new IllegalArgumentExceptionCustom("Unknown state: UNSUPPORTED_STATUS");
         }
         return bookings.stream().map(BookingMapper::toBookingDtoInfo).collect(Collectors.toList());
     }
@@ -108,26 +126,27 @@ public class BookingServiceImpl implements BookingService{
         List<Booking> bookings;
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findByItem_Owner_IdOrderByEnd_BookingDesc(userId);
+                bookings = bookingRepository.findByItem_Owner_IdOrderByEndDesc(userId);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByItem_Owner_idAndBetweenStartAndEnd(userId,
-                        LocalDateTime.now());
+                bookings = bookingRepository.findByItem_Owner_IdAndStartLessThanEqualAndEndGreaterThanOrderByEndDesc
+                        (userId, LocalDateTime.now(), LocalDateTime.now());
                 break;
             case PAST:
-                bookings = bookingRepository.findByItem_Owner_idAndEndBeforeOrderByStartDesc(userId,
+                bookings = bookingRepository.findByItem_Owner_IdAndEndBeforeOrderByStartDesc(userId,
                         LocalDateTime.now());
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByItem_Owner_idAndStartGreaterThanOrderByEndDesc(
+                bookings = bookingRepository.findByItem_Owner_IdAndStartAfterOrderByEndDesc(
                         userId, LocalDateTime.now());
                 break;
             case WAITING:
-                bookings = bookingRepository.findByItem_Owner_idAndStatusIsOrderByStartDesc(userId,
+                bookings = bookingRepository.findByItem_Owner_IdAndStatusIsOrderByStartDesc(userId,
                         BookingStatus.WAITING);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByItem_Owner_idAndStatusIsOrderByStartDesc(userId, BookingStatus.REJECTED);
+                bookings = bookingRepository.findByItem_Owner_IdAndStatusIsOrderByStartDesc(userId,
+                        BookingStatus.REJECTED);
                 break;
             default:
                 throw new BadRequestException(String.format("Unknown status %s", state.toString()));
@@ -138,20 +157,47 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public Booking getByIdOrNotFoundError(Long bookingId) {
         return bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException( String.format("Not found booking, id: %d" + bookingId)));
+                .orElseThrow(() -> new NotFoundException( String.format("Not found booking, id: %d", bookingId)));
+    }
+
+    @Override
+    public List<Booking> findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus (Long itemId,
+    Long userId, LocalDateTime now, BookingStatus status, Sort sort) {
+        return bookingRepository.findAllBookingsByItem_IdAndBooker_IdAndEndBeforeAndStatus(itemId,
+                userId, now, status, sort);
+    }
+
+    @Override
+    public List<BookingDtoForItem> getNextBooking(Long itemId, LocalDateTime now) {
+        List<Booking> bookingsList = bookingRepository.findByItem_IdAndStartIsAfterOrderByStartDesc(itemId, now);
+        return bookingsList
+                .stream()
+                .filter(x -> x.getStatus().equals(BookingStatus.APPROVED))
+                .map(BookingMapper::bookingDtoForItem)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookingDtoForItem> getLastBooking(Long itemId, LocalDateTime now) {
+        return bookingRepository.findByItem_IdAndEndIsBeforeOrderByEndDesc(itemId, now)
+                .stream()
+                .filter(x -> x.getStatus().equals(BookingStatus.APPROVED))
+                .map(BookingMapper::bookingDtoForItem)
+                .collect(Collectors.toList());
     }
 
     private void checkBooking(BookingDto bookingDto, Long bookerId) {
         Item item = itemService.getByIdOrNotFoundError(bookingDto.getItemId());
-        User user = userService.getByIdOrNotFoundError(bookerId);
-        if (item.getAvailable()) {
-            throw new BadRequestException(String.format("Not found. Item %d.", bookingDto.getItemId()));
+        userService.getByIdOrNotFoundError(bookerId);
+        if (!item.getAvailable()) {
+            throw new BadRequestException(String.format("Not available. Item %d.", bookingDto.getItemId()));
         }
-        if (item.getOwner().getId() == user.getId()) {
-            throw new NotFoundException("Booker is the owner the item.");
+        if (item.getOwner().getId() == bookerId) {
+            throw new OwnerException("Booker is the owner the item.");
         }
         LocalDateTime time = LocalDateTime.now();
-        if (bookingDto.getStart().isBefore(time) || bookingDto.getEnd().isBefore(time)) {
+        if (bookingDto.getStart().isBefore(time) || bookingDto.getEnd().isBefore(time)
+                || bookingDto.getStart().isAfter(bookingDto.getEnd())) {
             throw new BadRequestException(String.format("Incorrect dates."));
         }
     }
@@ -160,7 +206,7 @@ public class BookingServiceImpl implements BookingService{
         try {
             return BookingStatus.valueOf(status);
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException(String.format("Error: bad status %s", status));
+            throw new BadRequestException(String.format("Unknown state: %s", status));
         }
     }
 }

@@ -46,4 +46,11 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentExceptionCustom.class)
+    public ErrorResponse handleIllegalArgumentExceptionCustom(IllegalArgumentExceptionCustom e) {
+        String error = "Unknown state: UNSUPPORTED_STATUS";
+        return new ErrorResponse(error);
+    }
+
 }

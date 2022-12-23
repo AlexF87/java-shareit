@@ -28,6 +28,6 @@ public class Booking {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private BookingStatus status;
 }

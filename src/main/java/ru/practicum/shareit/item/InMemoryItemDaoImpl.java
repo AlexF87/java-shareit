@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component
+
 public class InMemoryItemDaoImpl implements ItemDao {
 
     private final Map<Long, Item> items = new HashMap<>();

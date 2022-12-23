@@ -8,11 +8,13 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
 @Entity
-@Table(name = "items")
+@Table(name = "items", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Item {
@@ -30,5 +32,7 @@ public class Item {
     private User owner;
     @Transient
     private ItemRequest request;
-
+    @OneToMany
+    @JoinColumn(name = "item_id")
+    private List<Comment> comments = new ArrayList<>();
 }
