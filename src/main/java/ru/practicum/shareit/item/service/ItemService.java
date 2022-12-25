@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -18,5 +19,6 @@ public interface ItemService {
     Collection<ItemDto> searchItem(String text);
 
     Item getByIdOrNotFoundError(Long itemId);
+
     CommentDto createComment(Long userId, CommentDto commentDto);
 }

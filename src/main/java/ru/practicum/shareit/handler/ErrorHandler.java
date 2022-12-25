@@ -22,7 +22,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleOwnerException(final OwnerException e) {
         log.info("Error 404 {}", e.getMessage());
-        return  new ErrorResponse(e.getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler

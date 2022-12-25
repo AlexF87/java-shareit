@@ -18,15 +18,15 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoInfo createBooking(@RequestBody BookingDto bookingDto,
-                                    @RequestHeader("X-Sharer-User-Id") Long bookerId) {
+                                        @RequestHeader("X-Sharer-User-Id") Long bookerId) {
         log.info("POST booking {}", bookingDto);
         return bookingService.create(bookingDto, bookerId);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingDtoInfo approve(@PathVariable Long bookingId,
-                                     @RequestParam Boolean approved,
-                                     @RequestHeader("X-Sharer-User-Id") Long ownerId) {
+                                  @RequestParam Boolean approved,
+                                  @RequestHeader("X-Sharer-User-Id") Long ownerId) {
         log.info("PATCH booking {}", bookingId, approved);
         return bookingService.approve(bookingId, ownerId, approved);
     }

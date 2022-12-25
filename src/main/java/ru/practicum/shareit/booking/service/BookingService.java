@@ -12,6 +12,7 @@ import java.util.List;
 
 public interface BookingService {
     BookingDtoInfo create(BookingDto bookingDto, Long bookerId);
+
     BookingDtoInfo approve(Long bookingId, Long ownerId, Boolean approved);
 
     BookingDtoInfo getBookingById(Long bookingId, Long userId);
@@ -21,10 +22,13 @@ public interface BookingService {
     List<BookingDtoInfo> getAllBookingsByOwnerId(Long userId, String state);
 
     Booking getByIdOrNotFoundError(Long bookingId);
+
     List<Booking> findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus(Long itemId, Long userId,
-                                                                                              LocalDateTime now,
-                                                                                             BookingStatus status,
-                                                                                         Sort sort);
+                                                                          LocalDateTime now,
+                                                                          BookingStatus status,
+                                                                          Sort sort);
+
     List<BookingDtoForItem> getNextBooking(Long itemId, LocalDateTime now);
+
     List<BookingDtoForItem> getLastBooking(Long itemId, LocalDateTime now);
 }

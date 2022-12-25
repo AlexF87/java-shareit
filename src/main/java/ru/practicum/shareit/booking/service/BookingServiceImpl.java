@@ -1,7 +1,5 @@
 package ru.practicum.shareit.booking.service;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -24,12 +22,14 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 @Transactional(readOnly = true)
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemService itemService;
     private final UserService userService;
+
     @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, @Lazy ItemService itemService,
                               UserService userService) {
@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService{
         } else {
             booking.setStatus(BookingStatus.REJECTED);
         }
-        return  BookingMapper.toBookingDtoInfo(bookingRepository.save(booking));
+        return BookingMapper.toBookingDtoInfo(bookingRepository.save(booking));
     }
 
     @Override
@@ -88,17 +88,17 @@ public class BookingServiceImpl implements BookingService{
         userService.getByIdOrNotFoundError(userId);
         BookingStatus state = checkStatus(status);
         List<Booking> bookings;
-        switch(state) {
+        switch (state) {
             case ALL:
                 bookings = bookingRepository.findByBooker_IdOrderByEndDesc(userId);
                 break;
             case CURRENT:
                 bookings =
-                        bookingRepository.findByBooker_IdAndStartLessThanEqualAndEndGreaterThanOrderByEndDesc
-                                (userId, LocalDateTime.now(),LocalDateTime.now());
+                        bookingRepository.findByBooker_IdAndStartLessThanEqualAndEndGreaterThanOrderByEndDesc(userId,
+                                LocalDateTime.now(), LocalDateTime.now());
                 break;
             case PAST:
-                bookings =  bookingRepository.findAllByBooker_IdAndEndBeforeOrderByStartDesc(userId,
+                bookings = bookingRepository.findAllByBooker_IdAndEndBeforeOrderByStartDesc(userId,
                         LocalDateTime.now());
                 break;
             case FUTURE:
@@ -129,8 +129,8 @@ public class BookingServiceImpl implements BookingService{
                 bookings = bookingRepository.findByItem_Owner_IdOrderByEndDesc(userId);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByItem_Owner_IdAndStartLessThanEqualAndEndGreaterThanOrderByEndDesc
-                        (userId, LocalDateTime.now(), LocalDateTime.now());
+                bookings = bookingRepository.findByItem_Owner_IdAndStartLessThanEqualAndEndGreaterThanOrderByEndDesc(
+                        userId, LocalDateTime.now(), LocalDateTime.now());
                 break;
             case PAST:
                 bookings = bookingRepository.findByItem_Owner_IdAndEndBeforeOrderByStartDesc(userId,
@@ -157,12 +157,12 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public Booking getByIdOrNotFoundError(Long bookingId) {
         return bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException( String.format("Not found booking, id: %d", bookingId)));
+                .orElseThrow(() -> new NotFoundException(String.format("Not found booking, id: %d", bookingId)));
     }
 
     @Override
-    public List<Booking> findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus (Long itemId,
-    Long userId, LocalDateTime now, BookingStatus status, Sort sort) {
+    public List<Booking> findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus(Long itemId,
+                                                                                 Long userId, LocalDateTime now, BookingStatus status, Sort sort) {
         return bookingRepository.findAllBookingsByItem_IdAndBooker_IdAndEndBeforeAndStatus(itemId,
                 userId, now, status, sort);
     }
