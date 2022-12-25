@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
         userService.getByIdOrNotFoundError(ownerId);
         Item item = booking.getItem();
 
-        if (item.getOwner().getId() != ownerId) {
+        if (item.getOwner().getId().longValue() != ownerId.longValue()) {
             throw new NotFoundException(String.format("User is not the owner. userId= %d ;  ownerId= %d",
                     ownerId, item.getOwner().getId()));
         }
@@ -77,7 +77,8 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoInfo getBookingById(Long bookingId, Long userId) {
         userService.getByIdOrNotFoundError(userId);
         Booking booking = getByIdOrNotFoundError(bookingId);
-        if (!(userId == (booking.getItem().getOwner().getId())) && !(booking.getBooker().getId() == userId)) {
+        if (!(userId.longValue() == (booking.getItem().getOwner().getId()).longValue()) &&
+                !(booking.getBooker().getId().longValue() == userId.longValue())) {
             throw new NotFoundException("You are not the owner");
         }
         return BookingMapper.toBookingDtoInfo(booking);
@@ -192,7 +193,7 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new BadRequestException(String.format("Not available. Item %d.", bookingDto.getItemId()));
         }
-        if (item.getOwner().getId() == bookerId) {
+        if (item.getOwner().getId().longValue() == bookerId.longValue()) {
             throw new OwnerException("Booker is the owner the item.");
         }
         LocalDateTime time = LocalDateTime.now();

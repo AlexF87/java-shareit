@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
         User user = userService.getByIdOrNotFoundError(userId);
         Item item = getByIdOrNotFoundError(itemId);
         ItemDto dto = ItemMapper.toItemDto(item);
-        if (userId == item.getOwner().getId()) {
+        if (userId.longValue() == item.getOwner().getId().longValue()) {
             BookingDtoForItem next = bookingService.getNextBooking(item.getId(), LocalDateTime.now())
                     .stream()
                     .findFirst()
@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
         if (item == null) {
             throw new NotFoundException(String.format("No item with id: %d  +", itemId));
         }
-        if (item.getOwner().getId() != (userId)) {
+        if (item.getOwner().getId().longValue() != userId.longValue()) {
             throw new OwnerException(String.format("This user don't owner"));
         }
         if (itemDto.getName() != null && !itemDto.getName().isBlank()) {
