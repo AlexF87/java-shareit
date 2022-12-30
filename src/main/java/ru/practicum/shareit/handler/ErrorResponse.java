@@ -1,16 +1,11 @@
 package ru.practicum.shareit.handler;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
+
 
 @Getter
-@Setter
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class ErrorResponse {
-    String message;
-
-    public ErrorResponse(String message) {
-        this.message = message;
-    }
+    private final String error;
 }
