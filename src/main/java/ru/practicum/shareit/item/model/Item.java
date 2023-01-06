@@ -35,4 +35,6 @@ public class Item {
     @OneToMany
     @JoinColumn(name = "item_id")
     private List<Comment> comments = new ArrayList<>();
+    @Column(name = "request_id")
+    private Long requestId;
 }

@@ -25,6 +25,7 @@ public class ItemDto {
     private BookingDtoForItem lastBooking;
     private BookingDtoForItem nextBooking;
     private List<CommentDto> comments;
+    private Long requestId;
 
     public static BookingDtoForItem toBookingDtoForItem(Booking booking) {
         if (booking == null) {
