@@ -87,7 +87,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoInfo> getAllBookingsByUserId(Long userId, String status, int from ,int size) {
+    public List<BookingDtoInfo> getAllBookingsByUserId(Long userId, String status, int from, int size) {
         Pageable pageable = CustomPageRequest.of(from, size);
         userService.getByIdOrNotFoundError(userId);
         BookingStatus state = checkStatus(status);
@@ -124,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoInfo> getAllBookingsByOwnerId(Long userId, String status, int from , int size) {
+    public List<BookingDtoInfo> getAllBookingsByOwnerId(Long userId, String status, int from, int size) {
         userService.getByIdOrNotFoundError(userId);
         Pageable pageable = CustomPageRequest.of(from, size);
         BookingStatus state = checkStatus(status);

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
     private final UserService userService;
+
     @Override
     public ItemRequestDto createRequest(ItemRequestDto itemRequestDto, Long userId) {
         User user = userService.getByIdOrNotFoundError(userId);
