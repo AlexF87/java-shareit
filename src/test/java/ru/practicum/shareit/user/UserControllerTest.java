@@ -9,13 +9,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -79,7 +77,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUser_whenUserValid_thenReturnSaveUser() throws Exception {
+    void addUser_whenUserValid_thenReturnSavedUser() throws Exception {
         UserDto user = UserDto.builder()
                 .id(1L)
                 .name("test")

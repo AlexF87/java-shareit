@@ -98,9 +98,6 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
         Item item = getByIdOrNotFoundError(itemId);
-        if (item == null) {
-            throw new NotFoundException(String.format("No item with id: %d  +", itemId));
-        }
         if (item.getOwner().getId().longValue() != userId.longValue()) {
             throw new OwnerException(String.format("This user don't owner"));
         }

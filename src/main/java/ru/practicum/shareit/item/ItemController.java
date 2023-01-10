@@ -18,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/items")
 @Slf4j
+@Validated
 public class ItemController {
     private final ItemService itemService;
 
