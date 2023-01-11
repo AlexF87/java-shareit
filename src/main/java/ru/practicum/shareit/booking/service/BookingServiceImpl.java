@@ -167,7 +167,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus(Long itemId,
-                                                                                 Long userId, LocalDateTime now, BookingStatus status, Sort sort) {
+                                                                                 Long userId, LocalDateTime now,
+                                                                                 BookingStatus status, Sort sort) {
         return bookingRepository.findAllBookingsByItem_IdAndBooker_IdAndEndBeforeAndStatus(itemId,
                 userId, now, status, sort);
     }
