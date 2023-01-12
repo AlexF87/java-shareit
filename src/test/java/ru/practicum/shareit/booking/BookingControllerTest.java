@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,22 +10,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
-import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import org.assertj.core.api.Assertions;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -118,9 +112,9 @@ class BookingControllerTest {
         when(bookingService.approve(any(), any(), any())).thenReturn(bookingDtoInfo);
 
         String result = mockMvc.perform(patch("/bookings/{bookingId}", bookingDtoInfo.getId())
-                .param("approved", "true")
-                .header("X-Sharer-User-Id", owner.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .param("approved", "true")
+                        .header("X-Sharer-User-Id", owner.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
                 .andReturn()
@@ -142,8 +136,8 @@ class BookingControllerTest {
         when(bookingService.getBookingById(any(), any())).thenReturn(bookingDtoInfo);
 
         mockMvc.perform(get("/bookings/{bookingId}", bookingDtoInfo.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-Sharer-User-Id", booker.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", booker.getId()))
 
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(bookingDtoInfo)));
@@ -163,11 +157,11 @@ class BookingControllerTest {
                 .thenReturn(List.of(bookingDtoInfo));
 
         mockMvc.perform(get("/bookings")
-                .header("X-Sharer-User-Id", booker.getId())
-                .param("state","ALL")
-                .param("from", "0")
-                .param("size", "10")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("X-Sharer-User-Id", booker.getId())
+                        .param("state", "ALL")
+                        .param("from", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(bookingDtoInfo))));
@@ -175,10 +169,10 @@ class BookingControllerTest {
 
 
     @Test
-    void getAllBookingsByUserId_whenFromNotPositive_thenThrowException() throws Exception{
+    void getAllBookingsByUserId_whenFromNotPositive_thenThrowException() throws Exception {
         mockMvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", booker.getId())
-                        .param("state","ALL")
+                        .param("state", "ALL")
                         .param("from", "-1")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -192,7 +186,7 @@ class BookingControllerTest {
     void getAllBookingsByUserId_whenSizeNotPositive_thenThrowException() {
         mockMvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", booker.getId())
-                        .param("state","ALL")
+                        .param("state", "ALL")
                         .param("from", "1")
                         .param("size", "-10")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -211,12 +205,12 @@ class BookingControllerTest {
                 .booker(UserMapper.toUserDto(booker))
                 .item(ItemMapper.toItemDto(item))
                 .build();
-        when(bookingService.getAllBookingsByOwnerId(any(),any(),anyInt(),anyInt()))
+        when(bookingService.getAllBookingsByOwnerId(any(), any(), anyInt(), anyInt()))
                 .thenReturn(List.of(bookingDtoInfo));
 
         mockMvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", booker.getId())
-                        .param("state","ALL")
+                        .param("state", "ALL")
                         .param("from", "0")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -231,7 +225,7 @@ class BookingControllerTest {
 
         mockMvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", booker.getId())
-                        .param("state","ALL")
+                        .param("state", "ALL")
                         .param("from", "-1")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -245,7 +239,7 @@ class BookingControllerTest {
 
         mockMvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", booker.getId())
-                        .param("state","ALL")
+                        .param("state", "ALL")
                         .param("from", "0")
                         .param("size", "-10")
                         .contentType(MediaType.APPLICATION_JSON))

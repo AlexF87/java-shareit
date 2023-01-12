@@ -46,8 +46,8 @@ class ItemControllerTest {
 
         mockMvc.perform(post("/items")
 
-                .content(new ObjectMapper().writeValueAsString(item))
-                .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(item))
+                        .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", "1"))
 
                 .andExpect(status().isOk())
@@ -58,7 +58,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void getAllItems_whenParamFromAndSizePositive_thenReturnResult() throws Exception{
+    void getAllItems_whenParamFromAndSizePositive_thenReturnResult() throws Exception {
         ItemDto item = ItemDto.builder()
                 .id(1L)
                 .name("Ручка шариковая")
@@ -67,9 +67,9 @@ class ItemControllerTest {
         when(itemService.getAllItems(any(), anyInt(), anyInt())).thenReturn(List.of(item));
 
         mockMvc.perform(get("/items")
-                .header("X-Sharer-User-Id", "1")
-                .param("from", "1")
-                .param("size", "1"))
+                        .header("X-Sharer-User-Id", "1")
+                        .param("from", "1")
+                        .param("size", "1"))
 
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(item))));
@@ -85,7 +85,7 @@ class ItemControllerTest {
         when(itemService.getItem(any(), any())).thenReturn(item);
 
         mockMvc.perform(get("/items/{itemId}", item.getId())
-                .header("X-Sharer-User-Id", "1"))
+                        .header("X-Sharer-User-Id", "1"))
 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(item.getId()))
@@ -103,16 +103,16 @@ class ItemControllerTest {
         when(itemService.searchItem(any(), anyInt(), anyInt())).thenReturn(List.of(item));
 
         mockMvc.perform(get("/items/search")
-                .param("text", "Ручка")
-                .param("from", "1")
-                .param("size", "1"))
+                        .param("text", "Ручка")
+                        .param("from", "1")
+                        .param("size", "1"))
 
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(item))));
     }
 
     @Test
-    void updateItem() throws Exception{
+    void updateItem() throws Exception {
         ItemDto item = ItemDto.builder()
                 .id(1L)
                 .name("Ручка шариковая")
@@ -121,9 +121,9 @@ class ItemControllerTest {
         when(itemService.updateItem(any(), any(), any())).thenReturn(item);
 
         mockMvc.perform(patch("/items/{itemId}", item.getId())
-                .header("X-Sharer-User-Id", "1")
-                .content(objectMapper.writeValueAsString(item))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("X-Sharer-User-Id", "1")
+                        .content(objectMapper.writeValueAsString(item))
+                        .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(item.getId()))
@@ -146,9 +146,9 @@ class ItemControllerTest {
         when(itemService.createComment(any(), any())).thenReturn(commentDto);
 
         mockMvc.perform(post("/items/{itemId}/comment", item.getId())
-                .header("X-Sharer-User-Id", "1")
-                .content(objectMapper.writeValueAsString(commentDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("X-Sharer-User-Id", "1")
+                        .content(objectMapper.writeValueAsString(commentDto))
+                        .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(commentDto)));

@@ -58,8 +58,8 @@ class ItemRepositoryTest {
     @Test
     void findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue() {
         List<Item> itemList =
-                itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue
-                        ("Java", "Java", CustomPageRequest.of(0, 2));
+                itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(
+                        "Java", "Java", CustomPageRequest.of(0, 2));
 
         assertNotNull(itemList);
         assertEquals(2, itemList.size());

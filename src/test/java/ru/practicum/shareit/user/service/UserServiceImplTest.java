@@ -2,14 +2,11 @@ package ru.practicum.shareit.user.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import ru.practicum.shareit.handler.exception.BadRequestException;
 import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,7 +50,7 @@ class UserServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
-                () ->userService.getUser(0L));
+                () -> userService.getUser(0L));
         assertEquals("User not exists", notFoundException.getMessage());
     }
 
@@ -127,6 +124,7 @@ class UserServiceImplTest {
 
         assertEquals("User not exist, id: " + user.getId(), badRequestException.getMessage());
     }
+
     @Test
     void deleteUserById() {
         UserDto user = UserDto.builder()

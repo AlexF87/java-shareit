@@ -41,7 +41,7 @@ class UserControllerTest {
         mockMvc.perform(get("/users"))
 
                 .andExpect(status().isOk())
-                .andExpect(content().json( objectMapper.writeValueAsString(List.of(user))));
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(user))));
     }
 
     @Test
@@ -70,7 +70,7 @@ class UserControllerTest {
         mockMvc.perform(get("/users/{id}", user.getId()))
 
                 .andExpect(status().isOk())
-                .andExpect(content().json( objectMapper.writeValueAsString(user)))
+                .andExpect(content().json(objectMapper.writeValueAsString(user)))
                 .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
                 .andExpect(jsonPath("$.name").value((user.getName())));
@@ -86,8 +86,8 @@ class UserControllerTest {
         when(service.createUser(user)).thenReturn(user);
 
         mockMvc.perform(post("/users")
-                .content(new ObjectMapper().writeValueAsString(user))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(new ObjectMapper().writeValueAsString(user))
+                        .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId()))
@@ -123,8 +123,8 @@ class UserControllerTest {
         when(service.updateUser(user.getId(), user)).thenReturn(user);
 
         mockMvc.perform(patch("/users/{id}", user.getId())
-                .content(objectMapper.writeValueAsString(user))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(user))
+                        .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId()))

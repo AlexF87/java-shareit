@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import lombok.ToString;
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingDtoForItem;
 
 import java.util.List;
@@ -26,11 +25,4 @@ public class ItemDto {
     private BookingDtoForItem nextBooking;
     private List<CommentDto> comments;
     private Long requestId;
-
-    public static BookingDtoForItem toBookingDtoForItem(Booking booking) {
-        if (booking == null) {
-            return null;
-        }
-        return new BookingDtoForItem(booking.getId(), booking.getBooker().getId());
-    }
 }

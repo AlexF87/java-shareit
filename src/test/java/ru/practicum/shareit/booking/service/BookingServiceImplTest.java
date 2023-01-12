@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
@@ -11,9 +10,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoForItem;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.common.CustomPageRequest;
 import ru.practicum.shareit.handler.exception.BadRequestException;
-import ru.practicum.shareit.handler.exception.IllegalArgumentExceptionCustom;
 import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.handler.exception.OwnerException;
 import ru.practicum.shareit.item.model.Item;
@@ -25,8 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -607,8 +602,8 @@ class BookingServiceImplTest {
         when(bookingRepository.findByItem_Owner_IdAndStatusIsOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(booking));
 
-        List<BookingDtoInfo> bookingDtoInfoList = bookingService.getAllBookingsByOwnerId(owner.getId()
-                , "REJECTED", 0, 10);
+        List<BookingDtoInfo> bookingDtoInfoList = bookingService.getAllBookingsByOwnerId(owner.getId(),
+                "REJECTED", 0, 10);
 
         assertNotNull(bookingDtoInfoList);
         assertEquals(1, bookingDtoInfoList.size());

@@ -1,11 +1,7 @@
 package ru.practicum.shareit.item.service;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
@@ -20,7 +16,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -29,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +37,7 @@ class ItemServiceImplTest {
     private CommentRepository commentRepository;
     User user;
     ItemDto itemDto;
+
     @BeforeEach
     void setUp() {
         userService = mock(UserService.class);
@@ -65,6 +60,7 @@ class ItemServiceImplTest {
                 .name("Bill")
                 .build();
     }
+
     @Test
     void addItem_whenCreateItem_thenRetrunItem() {
         when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
@@ -99,7 +95,7 @@ class ItemServiceImplTest {
         when(itemRepository.findById(any())).thenReturn(Optional.empty());
 
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
-                () ->itemService.getItem(user.getId(), itemDto.getId()));
+                () -> itemService.getItem(user.getId(), itemDto.getId()));
         assertEquals(String.format("Not found item %d", itemDto.getId()), notFoundException.getMessage());
 
         verify(itemRepository).findById(itemDto.getId());
@@ -108,13 +104,13 @@ class ItemServiceImplTest {
     @Test
     void getAllItems_whenGetItems_thenReturnListItems() {
         when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
-        when(itemRepository.findByOwner_Id(user.getId(), CustomPageRequest.of(1,1)))
+        when(itemRepository.findByOwner_Id(user.getId(), CustomPageRequest.of(1, 1)))
                 .thenReturn(List.of(ItemMapper.toItem(itemDto, user)));
 
         List<ItemDto> listItemDto = itemService.getAllItems(user.getId(), 1, 1);
 
         assertEquals(1, listItemDto.size());
-        verify(itemRepository).findByOwner_Id(user.getId(), CustomPageRequest.of(1,1));
+        verify(itemRepository).findByOwner_Id(user.getId(), CustomPageRequest.of(1, 1));
     }
 
     @Test
@@ -136,7 +132,7 @@ class ItemServiceImplTest {
 
 
         OwnerException ownerException = assertThrows(OwnerException.class,
-                () -> itemService.updateItem(2L, itemDto.getId(),itemDto));
+                () -> itemService.updateItem(2L, itemDto.getId(), itemDto));
 
         assertEquals(String.format("This user don't owner"), ownerException.getMessage());
         verify(itemRepository, never()).save(ItemMapper.toItem(itemDto, user));
@@ -173,7 +169,7 @@ class ItemServiceImplTest {
 
         verify(itemRepository, never()).save(ItemMapper.toItem(itemDto, user));
         assertEquals(String.format("Validation error itemDto name: %s description: %s available:" +
-                " %b", itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable()),
+                        " %b", itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable()),
                 validationException.getMessage());
     }
 
@@ -188,18 +184,18 @@ class ItemServiceImplTest {
                 .build();
         when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
         when(commentRepository.save(any())).thenReturn(CommentMapper.toComment(commentDto, ItemMapper.toItem(itemDto,
-         user), user));
+                user), user));
         when(itemRepository.findById(any())).thenReturn(Optional.of(ItemMapper.toItem(itemDto, user)));
-        when(bookingService.findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus(any(),any(), any(), any(), any()))
+        when(bookingService.findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus(any(), any(), any(), any(), any()))
                 .thenReturn(List.of(Booking.builder()
-                                .item(ItemMapper.toItem(itemDto, user))
-                                .booker(user)
-                                .start(LocalDateTime.now().minusDays(1))
-                                .end(LocalDateTime.now().minusHours(1))
-                                .status(BookingStatus.APPROVED)
-                                .build()));
+                        .item(ItemMapper.toItem(itemDto, user))
+                        .booker(user)
+                        .start(LocalDateTime.now().minusDays(1))
+                        .end(LocalDateTime.now().minusHours(1))
+                        .status(BookingStatus.APPROVED)
+                        .build()));
 
-        CommentDto actualCommentDto = itemService.createComment(user.getId(),  commentDto);
+        CommentDto actualCommentDto = itemService.createComment(user.getId(), commentDto);
 
         assertEquals(commentDto.getItemId(), actualCommentDto.getItemId());
         assertEquals(commentDto.getCreated(), actualCommentDto.getCreated());
@@ -219,7 +215,7 @@ class ItemServiceImplTest {
         when(commentRepository.save(any())).thenReturn(CommentMapper.toComment(commentDto, ItemMapper.toItem(itemDto,
                 user), user));
         when(itemRepository.findById(any())).thenReturn(Optional.of(ItemMapper.toItem(itemDto, user)));
-        when(bookingService.findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus(any(),any(), any(), any(), any()))
+        when(bookingService.findAllBookingsByBookerIdAndItemIdAndEndBeforeAndStatus(any(), any(), any(), any(), any()))
                 .thenReturn(null);
 
         BadRequestException badRequestException = assertThrows(BadRequestException.class,
