@@ -154,7 +154,7 @@ public class BookingServiceImpl implements BookingService {
                         BookingStatus.REJECTED, pageable);
                 break;
             default:
-                throw new BadRequestException(String.format("Unknown status %s", state.toString()));
+                throw new IllegalArgumentExceptionCustom(String.format("Unknown status %s", state.toString()));
         }
         return bookings.stream().map(BookingMapper::toBookingDtoInfo).collect(Collectors.toList());
     }
@@ -212,7 +212,7 @@ public class BookingServiceImpl implements BookingService {
         try {
             return BookingStatus.valueOf(status);
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException(String.format("Unknown state: %s", status));
+            throw new IllegalArgumentExceptionCustom(String.format("Unknown state: %s", status));
         }
     }
 }

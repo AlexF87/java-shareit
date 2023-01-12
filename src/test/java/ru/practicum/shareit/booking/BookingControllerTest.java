@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.handler.exception.IllegalArgumentExceptionCustom;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -167,6 +168,29 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(bookingDtoInfo))));
     }
 
+    @SneakyThrows
+    @Test
+    void getAllBookingsByUserId_whenStatusNotExists_theThrow() {
+        BookingDtoInfo bookingDtoInfo = BookingDtoInfo.builder()
+                .id(1L)
+                .start(bookingDtoNew.getStart())
+                .end(bookingDtoNew.getEnd())
+                .booker(UserMapper.toUserDto(booker))
+                .item(ItemMapper.toItemDto(item))
+                .build();
+        when(bookingService.getAllBookingsByUserId(any(), any(), anyInt(), anyInt()))
+                .thenThrow(IllegalArgumentExceptionCustom.class);
+
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", booker.getId())
+                        .param("state", "Not status")
+                        .param("from", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isBadRequest());
+
+    }
 
     @Test
     void getAllBookingsByUserId_whenFromNotPositive_thenThrowException() throws Exception {

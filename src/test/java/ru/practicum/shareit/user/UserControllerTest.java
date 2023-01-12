@@ -9,6 +9,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import ru.practicum.shareit.handler.exception.BadRequestException;
+import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -77,6 +79,20 @@ class UserControllerTest {
     }
 
     @Test
+    void getUser_whenUserNotFound_thenThrow() throws Exception {
+        UserDto user = UserDto.builder()
+                .id(1L)
+                .name("test")
+                .email("test@mail.ru")
+                .build();
+        when(service.getUser(1L)).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/users/{id}", user.getId()))
+
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void addUser_whenUserValid_thenReturnSavedUser() throws Exception {
         UserDto user = UserDto.builder()
                 .id(1L)
@@ -130,5 +146,21 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.name").value(user.getName()))
                 .andExpect((jsonPath("$.email").value(user.getEmail())));
+    }
+
+    @Test
+    void updateUser_whenUserNotExists_thenThrowException() throws Exception {
+        UserDto user = UserDto.builder()
+                .id(1L)
+                .name("test")
+                .email("testmailru")
+                .build();
+        when(service.updateUser(user.getId(), user)).thenThrow(BadRequestException.class);
+
+        mockMvc.perform(patch("/users/{id}", user.getId())
+                        .content(objectMapper.writeValueAsString(user))
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isBadRequest());
     }
 }

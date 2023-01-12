@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoForItem;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.handler.exception.BadRequestException;
+import ru.practicum.shareit.handler.exception.IllegalArgumentExceptionCustom;
 import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.handler.exception.OwnerException;
 import ru.practicum.shareit.item.model.Item;
@@ -477,11 +478,11 @@ class BookingServiceImplTest {
         String status = "None";
         when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
 
-        BadRequestException badRequestException = assertThrows(BadRequestException.class,
+        IllegalArgumentExceptionCustom illegalArgumentExceptionCustom = assertThrows(IllegalArgumentExceptionCustom.class,
                 () -> bookingService.getAllBookingsByUserId(user.getId(), status,
                         0, 10));
 
-        assertEquals(String.format("Unknown state: %s", status), badRequestException.getMessage());
+        assertEquals(String.format("Unknown state: %s", status), illegalArgumentExceptionCustom.getMessage());
     }
 
     @Test
@@ -607,6 +608,26 @@ class BookingServiceImplTest {
 
         assertNotNull(bookingDtoInfoList);
         assertEquals(1, bookingDtoInfoList.size());
+    }
+
+    @Test
+    void getAllBookingsByOwnerId_whenStatusNone_thenThrowException() {
+        Booking booking = Booking.builder()
+                .id(bookingDto.getItemId())
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .booker(owner)
+                .status(BookingStatus.REJECTED)
+                .item(item)
+                .build();
+        when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
+        when(bookingRepository.findByItem_Owner_IdAndStatusIsOrderByStartDesc(any(), any(), any()))
+                .thenThrow(IllegalArgumentExceptionCustom.class);
+
+        IllegalArgumentExceptionCustom illegalArgumentExceptionCustom =
+                assertThrows(IllegalArgumentExceptionCustom.class,
+                        () -> bookingService.getAllBookingsByOwnerId(owner.getId(), "None", 0, 10));
+
     }
 
     @Test

@@ -34,13 +34,6 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEmailException(final EmailException e) {
-        log.info("Error 409 {}", e.getMessage());
-        return new ErrorResponse(e.getMessage());
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
     public ErrorResponse handleBadRequestException(BadRequestException e) {
