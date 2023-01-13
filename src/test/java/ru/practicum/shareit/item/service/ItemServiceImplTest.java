@@ -62,7 +62,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void addItem_whenCreateItem_thenRetrunItem() {
+    void addItem_whenCreateItem_thenReturnItem() {
         when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
         when(itemRepository.save(any())).thenReturn(ItemMapper.toItem(itemDto, user));
 

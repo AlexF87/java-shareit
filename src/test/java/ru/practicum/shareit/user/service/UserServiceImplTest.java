@@ -7,6 +7,7 @@ import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -80,7 +81,7 @@ class UserServiceImplTest {
         UserDto result = userService.createUser(userDto);
 
         assertEquals(userDto, result);
-        verify(userRepository).save(user);
+        verify(userRepository).save(UserMapper.toUser(userDto));
     }
 
     @Test

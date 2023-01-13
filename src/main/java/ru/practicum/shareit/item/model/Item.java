@@ -1,16 +1,16 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-@Data
+
+@Setter
+@Getter
 @Builder
 @Entity
 @Table(name = "items", schema = "public")
@@ -35,4 +35,18 @@ public class Item {
     private List<Comment> comments = new ArrayList<>();
     @Column(name = "request_id")
     private Long requestId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Item)) return false;
+        Item item = (Item) o;
+        return Objects.equals(getId(), item.getId()) &&
+                Objects.equals(getName(), item.getName()) &&
+                Objects.equals(getDescription(), item.getDescription()) &&
+                Objects.equals(getAvailable(), item.getAvailable()) &&
+                Objects.equals(getOwner(), item.getOwner()) &&
+                Objects.equals(getComments(), item.getComments()) &&
+                Objects.equals(getRequestId(), item.getRequestId());
+    }
 }
