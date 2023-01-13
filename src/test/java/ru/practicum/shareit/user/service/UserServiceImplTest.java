@@ -97,7 +97,7 @@ class UserServiceImplTest {
                 .email("updUser@tester.ru")
                 .build();
         when(userRepository.existsById(user.getId())).thenReturn(true);
-        when(userRepository.getReferenceById(user.getId())).thenReturn(user);
+        when(userRepository.getById(user.getId())).thenReturn(user);
 
         UserDto actualUser = userService.updateUser(user.getId(), updUser);
 
