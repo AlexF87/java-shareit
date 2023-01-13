@@ -32,4 +32,21 @@ public class User {
                 Objects.equals(getName(), user.getName()) &&
                 Objects.equals(getEmail(), user.getEmail());
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        if (getId() != null) {
+            hash = hash + getId().hashCode();
+        }
+        hash = hash * 31;
+
+        if (name != null) {
+            hash = hash + name.hashCode();
+        }
+        if (email != null) {
+            hash = hash + email.hashCode();
+        }
+        return hash;
+    }
 }

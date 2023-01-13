@@ -49,4 +49,32 @@ public class Item {
                 Objects.equals(getComments(), item.getComments()) &&
                 Objects.equals(getRequestId(), item.getRequestId());
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        if (getId() != null) {
+            hash = hash + getId().hashCode();
+        }
+        hash = hash * 31;
+        if (getName() != null) {
+            hash = hash + getName().hashCode();
+        }
+        if (getDescription() != null) {
+            hash = hash + getDescription().hashCode();
+        }
+        if (getAvailable() != null) {
+            hash = hash + getAvailable().hashCode();
+        }
+        if (getOwner() != null) {
+            hash = hash + getOwner().hashCode();
+        }
+        if (getComments() != null) {
+            hash = hash + getComments().hashCode();
+        }
+        if (getRequestId() != null) {
+            hash = hash + getRequestId().hashCode();
+        }
+        return hash;
+    }
 }
