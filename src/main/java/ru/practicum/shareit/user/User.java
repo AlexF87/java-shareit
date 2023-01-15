@@ -1,14 +1,13 @@
 package ru.practicum.shareit.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @Table(name = "users")
@@ -23,4 +22,31 @@ public class User {
     @Email
     @Column(unique = true)
     private String email;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId()) &&
+                Objects.equals(getName(), user.getName()) &&
+                Objects.equals(getEmail(), user.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        if (getId() != null) {
+            hash = hash + getId().hashCode();
+        }
+        hash = hash * 31;
+
+        if (name != null) {
+            hash = hash + name.hashCode();
+        }
+        if (email != null) {
+            hash = hash + email.hashCode();
+        }
+        return hash;
+    }
 }

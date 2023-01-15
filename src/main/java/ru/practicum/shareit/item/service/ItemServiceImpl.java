@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDtoForItem;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.common.CustomPageRequest;
 import ru.practicum.shareit.handler.exception.BadRequestException;
 import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.handler.exception.OwnerException;
@@ -69,9 +71,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllItems(Long userId) {
+    public List<ItemDto> getAllItems(Long userId, int from, int size) {
+        Pageable pageable = CustomPageRequest.of(from, size);
         userService.getByIdOrNotFoundError(userId);
-        List<ItemDto> itemDtoList = itemRepository.findByOwner_Id(userId)
+        List<ItemDto> itemDtoList = itemRepository.findByOwner_Id(userId, pageable)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -95,9 +98,6 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
         Item item = getByIdOrNotFoundError(itemId);
-        if (item == null) {
-            throw new NotFoundException(String.format("No item with id: %d  +", itemId));
-        }
         if (item.getOwner().getId().longValue() != userId.longValue()) {
             throw new OwnerException(String.format("This user don't owner"));
         }
@@ -114,12 +114,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> searchItem(String text) {
+    public Collection<ItemDto> searchItem(String text, int from, int size) {
+        Pageable pageable = CustomPageRequest.of(from, size);
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
         return itemRepository
-                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text)
+                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text, pageable)
                 .stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 

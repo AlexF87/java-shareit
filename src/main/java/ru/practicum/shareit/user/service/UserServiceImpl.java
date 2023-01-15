@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(Long userId, UserDto userDto) {
         User userDB = new User();
         if (userRepository.existsById(userId)) {
-            UserDto userDtoFromDB = UserMapper.toUserDto(userRepository.getReferenceById(userId));
+            UserDto userDtoFromDB = UserMapper.toUserDto(userRepository.getById(userId));
             userDB = UserMapper.toUser(userDtoFromDB);
         } else {
             throw new BadRequestException(String.format("User not exist, id: %d", userId));

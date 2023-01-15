@@ -21,6 +21,7 @@ public class ItemMapper {
                         .stream()
                         .map(CommentMapper::toCommentDto)
                         .collect(Collectors.toList()))
+                .requestId(item.getRequestId())
                 .build();
     }
 
@@ -32,6 +33,7 @@ public class ItemMapper {
                 .description(itemDto.getDescription())
                 .available((itemDto.getAvailable()))
                 .owner(owner)
+                .requestId(itemDto.getRequestId())
                 .build();
     }
 }

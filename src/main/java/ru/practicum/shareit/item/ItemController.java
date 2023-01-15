@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/items")
 @Slf4j
+@Validated
 public class ItemController {
     private final ItemService itemService;
 
@@ -27,9 +30,11 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")int from,
+                                     @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("GetAllItems userId {}", userId);
-        return itemService.getAllItems(userId);
+        return itemService.getAllItems(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -40,9 +45,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> searchItem(@RequestParam String text) {
+    public Collection<ItemDto> searchItem(@RequestParam String text,
+                                          @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")int from,
+                                          @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Search item. Text {}", text);
-        return itemService.searchItem(text);
+        return itemService.searchItem(text, from, size);
     }
 
     @PatchMapping("/{itemId}")
