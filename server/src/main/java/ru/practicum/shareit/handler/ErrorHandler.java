@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.handler.exception.*;
 
-import javax.validation.ConstraintViolationException;
+
 
 @RestControllerAdvice
 @Slf4j
@@ -48,9 +48,9 @@ public class ErrorHandler {
         return new ErrorResponse(error);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({ConstraintViolationException.class})
-    public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
-        return new ErrorResponse("Error: " + e.getMessage());
-    }
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ExceptionHandler({ConstraintViolationException.class})
+//    public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
+//        return new ErrorResponse("Error: " + e.getMessage());
+//    }
 }

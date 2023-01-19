@@ -8,8 +8,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -46,8 +44,8 @@ public class BookingController {
     public List<BookingDtoInfo> getAllBookingsByUserId(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(defaultValue = "ALL") String state,
-            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-            @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
+            @RequestParam(name = "from", defaultValue = "0") int from,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("GET bookings state={}&from{}&size{}", state);
         return bookingService.getAllBookingsByUserId(userId, state, from, size);
     }
@@ -56,8 +54,8 @@ public class BookingController {
     public List<BookingDtoInfo> getAllBookingsByOwnerId(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(defaultValue = "ALL") String state,
-            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-            @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
+            @RequestParam(name = "from", defaultValue = "0") int from,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("GET booking owner?state={}", state);
         return bookingService.getAllBookingsByOwnerId(userId, state, from, size);
     }

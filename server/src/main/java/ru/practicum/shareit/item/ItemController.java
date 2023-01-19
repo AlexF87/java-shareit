@@ -8,9 +8,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,8 +28,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")int from,
-                                     @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
+                                     @RequestParam(name = "from", defaultValue = "0")int from,
+                                     @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("GetAllItems userId {}", userId);
         return itemService.getAllItems(userId, from, size);
     }
@@ -46,8 +43,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public Collection<ItemDto> searchItem(@RequestParam String text,
-                                          @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")int from,
-                                          @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
+                                          @RequestParam(name = "from", defaultValue = "0")int from,
+                                          @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Search item. Text {}", text);
         return itemService.searchItem(text, from, size);
     }
@@ -63,7 +60,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long userId,
                                     @PathVariable Long itemId,
-                                    @Valid @RequestBody CommentDto commentDto) {
+                                    @RequestBody CommentDto commentDto) {
         commentDto.setItemId(itemId);
         log.info("POST comment {}, userId {}, itemId {} ", commentDto, userId, itemId);
         return itemService.createComment(userId, commentDto);
