@@ -192,33 +192,6 @@ class BookingControllerTest {
 
     }
 
-    @Test
-    void getAllBookingsByUserId_whenFromNotPositive_thenThrowException() throws Exception {
-        mockMvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", booker.getId())
-                        .param("state", "ALL")
-                        .param("from", "-1")
-                        .param("size", "10")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isInternalServerError());
-    }
-
-    @SneakyThrows
-    @Test
-    void getAllBookingsByUserId_whenSizeNotPositive_thenThrowException() {
-        mockMvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", booker.getId())
-                        .param("state", "ALL")
-                        .param("from", "1")
-                        .param("size", "-10")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isInternalServerError());
-    }
-
     @SneakyThrows
     @Test
     void getAllBookingsByOwnerId() {
@@ -241,33 +214,5 @@ class BookingControllerTest {
 
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(bookingDtoInfo))));
-    }
-
-    @SneakyThrows
-    @Test
-    void getAllBookingsByOwnerId_whenFromNotPositive_thenThrowException() {
-
-        mockMvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", booker.getId())
-                        .param("state", "ALL")
-                        .param("from", "-1")
-                        .param("size", "10")
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isInternalServerError());
-    }
-
-    @SneakyThrows
-    @Test
-    void getAllBookingsByOwnerId_whenSizeNotPositive_thenThrowException() {
-
-        mockMvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", booker.getId())
-                        .param("state", "ALL")
-                        .param("from", "0")
-                        .param("size", "-10")
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isInternalServerError());
     }
 }

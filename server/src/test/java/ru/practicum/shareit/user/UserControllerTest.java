@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.shareit.handler.exception.BadRequestException;
 import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -109,24 +108,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.name").value(user.getName()))
                 .andExpect((jsonPath("$.email").value(user.getEmail())));
-    }
-
-    @Test
-    void addUser_whenUserNotValid_thenReturn400() throws Exception {
-        UserDto user = UserDto.builder()
-                .id(1L)
-                .name("test")
-                .email("testmailru")
-                .build();
-
-        mockMvc.perform(post("/users")
-                        .content(new ObjectMapper().writeValueAsString(user))
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isBadRequest())
-                .andExpect(mvcResult ->
-                        mvcResult.getResolvedException().getClass().equals(MethodArgumentNotValidException.class));
-
     }
 
     @Test

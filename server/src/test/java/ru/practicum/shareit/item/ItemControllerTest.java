@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.shareit.handler.exception.OwnerException;
 import ru.practicum.shareit.handler.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -188,30 +187,5 @@ class ItemControllerTest {
 
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(commentDto)));
-    }
-
-    @Test
-    void createComment_whenCommentEmpty_thenReturn400() throws Exception {
-        ItemDto item = ItemDto.builder()
-                .id(1L)
-                .name("Ручка шариковая")
-                .description("No comment")
-                .build();
-        CommentDto commentDto = CommentDto.builder()
-                .id(2L)
-                .authorName("Tomas")
-                .text("")
-                .build();
-        when(itemService.createComment(any(), any())).thenReturn(commentDto);
-
-        mockMvc.perform(post("/items/{itemId}/comment", item.getId())
-                        .header("X-Sharer-User-Id", "1")
-                        .content(objectMapper.writeValueAsString(commentDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isBadRequest())
-                .andExpect(mvcResult ->
-                        mvcResult.getResolvedException().getClass().equals(MethodArgumentNotValidException.class));
-
     }
 }

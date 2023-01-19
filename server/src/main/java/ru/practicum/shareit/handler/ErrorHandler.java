@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.handler.exception.*;
 
-
-
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
@@ -47,10 +45,4 @@ public class ErrorHandler {
         String error = "Unknown state: UNSUPPORTED_STATUS";
         return new ErrorResponse(error);
     }
-
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    @ExceptionHandler({ConstraintViolationException.class})
-//    public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
-//        return new ErrorResponse("Error: " + e.getMessage());
-//    }
 }

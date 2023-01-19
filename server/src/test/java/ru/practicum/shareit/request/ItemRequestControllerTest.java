@@ -56,25 +56,6 @@ class ItemRequestControllerTest {
 
     @SneakyThrows
     @Test
-    void createRequest_whenDescriptionEmpty_thenThrowException() {
-        ItemRequestDto itemRequestDto = ItemRequestDto.builder()
-                .id(1L)
-                .description(null)
-                .created(LocalDateTime.now())
-                .build();
-
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(itemRequestDto)))
-
-                .andExpect(status().isBadRequest());
-
-        verify(itemRequestService, never()).createRequest(any(), any());
-    }
-
-    @SneakyThrows
-    @Test
     void getItemRequestsByUserId() {
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .id(1L)
@@ -111,47 +92,6 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(itemRequestDto))));
         verify(itemRequestService, times(1)).getAllRequests(1L, 0, 10);
-    }
-
-    @SneakyThrows
-    @Test
-    void getAllRequests_whenFromIsNegative_thenReturnStatus500() {
-        ItemRequestDto itemRequestDto = ItemRequestDto.builder()
-                .id(1L)
-                .description("Book")
-                .created(LocalDateTime.now())
-                .build();
-        when(itemRequestService.getAllRequests(any(), anyInt(), anyInt())).thenReturn(List.of(itemRequestDto));
-
-        mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("from", "-1")
-                        .param("size", "10")
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isInternalServerError());
-        verify(itemRequestService, never()).getAllRequests(1L, -1, 10);
-    }
-
-    @SneakyThrows
-    @Test
-    void getAllRequests_whenSizeIsNegative_thenReturnStatus500() {
-        ItemRequestDto itemRequestDto = ItemRequestDto.builder()
-                .id(1L)
-                .description("Book")
-                .created(LocalDateTime.now())
-                .build();
-        when(itemRequestService.getAllRequests(any(), anyInt(), anyInt())).thenReturn(List.of(itemRequestDto));
-
-        mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("from", "0")
-                        .param("size", "-10")
-                        .contentType(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isInternalServerError());
-
-        verify(itemRequestService, never()).getAllRequests(1L, 0, -10);
     }
 
     @SneakyThrows
