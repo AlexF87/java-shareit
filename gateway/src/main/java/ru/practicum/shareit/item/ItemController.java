@@ -62,7 +62,7 @@ public class ItemController {
     public ResponseEntity<Object> createComment(@PathVariable Long itemId,
                                                 @RequestHeader("X-Sharer-User-Id") Long userId,
                                                 @Valid @RequestBody CommentDto commentDto) {
-        return itemClient.createComment(itemId, userId, commentDto);
+        return itemClient.createComment(userId, itemId, commentDto);
     }
 
 }

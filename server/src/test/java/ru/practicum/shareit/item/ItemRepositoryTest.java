@@ -49,7 +49,8 @@ class ItemRepositoryTest {
 
     @Test
     void findByOwner_Id() {
-        List<Item> itemList = itemRepository.findByOwner_Id(user.getId(), CustomPageRequest.of(0, 10));
+        List<Item> itemList = itemRepository.findByOwner_IdOrderByIdAsc(user.getId(),
+                CustomPageRequest.of(0, 10));
 
         assertNotNull(itemList);
         assertEquals(2, itemList.size());

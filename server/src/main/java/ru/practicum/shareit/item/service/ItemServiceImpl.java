@@ -74,7 +74,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getAllItems(Long userId, int from, int size) {
         Pageable pageable = CustomPageRequest.of(from, size);
         userService.getByIdOrNotFoundError(userId);
-        List<ItemDto> itemDtoList = itemRepository.findByOwner_Id(userId, pageable)
+        List<ItemDto> itemDtoList = itemRepository.findByOwner_IdOrderByIdAsc(userId, pageable)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -138,6 +138,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException(String.format("Not found item %d", itemId)));
     }
 
+    @Transactional
     @Override
     public CommentDto createComment(Long userId, CommentDto commentDto) {
         User user = userService.getByIdOrNotFoundError(userId);

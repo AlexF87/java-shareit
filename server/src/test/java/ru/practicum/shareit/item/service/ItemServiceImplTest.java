@@ -104,13 +104,13 @@ class ItemServiceImplTest {
     @Test
     void getAllItems_whenGetItems_thenReturnListItems() {
         when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
-        when(itemRepository.findByOwner_Id(user.getId(), CustomPageRequest.of(1, 1)))
+        when(itemRepository.findByOwner_IdOrderByIdAsc(user.getId(), CustomPageRequest.of(1, 1)))
                 .thenReturn(List.of(ItemMapper.toItem(itemDto, user)));
 
         List<ItemDto> listItemDto = itemService.getAllItems(user.getId(), 1, 1);
 
         assertEquals(1, listItemDto.size());
-        verify(itemRepository).findByOwner_Id(user.getId(), CustomPageRequest.of(1, 1));
+        verify(itemRepository).findByOwner_IdOrderByIdAsc(user.getId(), CustomPageRequest.of(1, 1));
     }
 
     @Test
