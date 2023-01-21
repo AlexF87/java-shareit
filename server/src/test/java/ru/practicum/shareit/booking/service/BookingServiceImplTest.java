@@ -11,7 +11,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoForItem;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.handler.exception.BadRequestException;
-import ru.practicum.shareit.handler.exception.IllegalArgumentExceptionCustom;
 import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.handler.exception.OwnerException;
 import ru.practicum.shareit.item.model.Item;
@@ -114,48 +113,6 @@ class BookingServiceImplTest {
                         () -> bookingService.create(bookingDto, owner.getId()));
 
         assertEquals("Booker is the owner the item.", ownerException.getMessage());
-        verify(bookingRepository, never()).save(any());
-    }
-
-    @Test
-    void create_whenBookingStartBeforeNow_thenThrowException() {
-        bookingDto.setStart(LocalDateTime.now().minusDays(1));
-        when(itemService.getByIdOrNotFoundError(any())).thenReturn(item);
-        when(userService.getByIdOrNotFoundError(user.getId())).thenReturn(user);
-
-        BadRequestException badRequestException =
-                assertThrows(BadRequestException.class,
-                        () -> bookingService.create(bookingDto, user.getId()));
-
-        assertEquals("Incorrect dates.", badRequestException.getMessage());
-        verify(bookingRepository, never()).save(any());
-    }
-
-    @Test
-    void create_whenBookingEndBeforeNow_thenThrowException() {
-        bookingDto.setEnd(LocalDateTime.now().minusDays(1));
-        when(itemService.getByIdOrNotFoundError(any())).thenReturn(item);
-        when(userService.getByIdOrNotFoundError(user.getId())).thenReturn(user);
-
-        BadRequestException badRequestException =
-                assertThrows(BadRequestException.class,
-                        () -> bookingService.create(bookingDto, user.getId()));
-
-        assertEquals("Incorrect dates.", badRequestException.getMessage());
-        verify(bookingRepository, never()).save(any());
-    }
-
-    @Test
-    void create_whenBookingStartAfterBookingEnd_thenThrowException() {
-        bookingDto.setStart(LocalDateTime.now().plusDays(3));
-        when(itemService.getByIdOrNotFoundError(any())).thenReturn(item);
-        when(userService.getByIdOrNotFoundError(user.getId())).thenReturn(user);
-
-        BadRequestException badRequestException =
-                assertThrows(BadRequestException.class,
-                        () -> bookingService.create(bookingDto, user.getId()));
-
-        assertEquals("Incorrect dates.", badRequestException.getMessage());
         verify(bookingRepository, never()).save(any());
     }
 
@@ -466,26 +423,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllBookingsByUserId_whenStatusUnknown_thenThrowException() {
-        Booking booking = Booking.builder()
-                .id(bookingDto.getItemId())
-                .start(bookingDto.getStart())
-                .end(bookingDto.getEnd())
-                .booker(owner)
-                .status(BookingStatus.REJECTED)
-                .item(item)
-                .build();
-        String status = "None";
-        when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
-
-        IllegalArgumentExceptionCustom illegalArgumentExceptionCustom = assertThrows(IllegalArgumentExceptionCustom.class,
-                () -> bookingService.getAllBookingsByUserId(user.getId(), status,
-                        0, 10));
-
-        assertEquals(String.format("Unknown state: %s", status), illegalArgumentExceptionCustom.getMessage());
-    }
-
-    @Test
     void getAllBookingsByOwnerId_whenStatusAll_thenReturnBookings() {
         Booking booking = Booking.builder()
                 .id(bookingDto.getItemId())
@@ -608,26 +545,6 @@ class BookingServiceImplTest {
 
         assertNotNull(bookingDtoInfoList);
         assertEquals(1, bookingDtoInfoList.size());
-    }
-
-    @Test
-    void getAllBookingsByOwnerId_whenStatusNone_thenThrowException() {
-        Booking booking = Booking.builder()
-                .id(bookingDto.getItemId())
-                .start(bookingDto.getStart())
-                .end(bookingDto.getEnd())
-                .booker(owner)
-                .status(BookingStatus.REJECTED)
-                .item(item)
-                .build();
-        when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
-        when(bookingRepository.findByItem_Owner_IdAndStatusIsOrderByStartDesc(any(), any(), any()))
-                .thenThrow(IllegalArgumentExceptionCustom.class);
-
-        IllegalArgumentExceptionCustom illegalArgumentExceptionCustom =
-                assertThrows(IllegalArgumentExceptionCustom.class,
-                        () -> bookingService.getAllBookingsByOwnerId(owner.getId(), "None", 0, 10));
-
     }
 
     @Test

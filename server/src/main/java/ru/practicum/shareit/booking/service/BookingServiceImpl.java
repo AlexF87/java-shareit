@@ -90,7 +90,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDtoInfo> getAllBookingsByUserId(Long userId, String status, int from, int size) {
         Pageable pageable = CustomPageRequest.of(from, size);
         userService.getByIdOrNotFoundError(userId);
-        BookingStatus state = checkStatus(status);
+        BookingStatus state = BookingStatus.valueOf(status);
         List<Booking> bookings;
         switch (state) {
             case ALL:
@@ -127,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDtoInfo> getAllBookingsByOwnerId(Long userId, String status, int from, int size) {
         userService.getByIdOrNotFoundError(userId);
         Pageable pageable = CustomPageRequest.of(from, size);
-        BookingStatus state = checkStatus(status);
+        BookingStatus state = BookingStatus.valueOf(status);
         List<Booking> bookings;
         switch (state) {
             case ALL:
@@ -200,19 +200,6 @@ public class BookingServiceImpl implements BookingService {
         }
         if (item.getOwner().getId().longValue() == bookerId.longValue()) {
             throw new OwnerException("Booker is the owner the item.");
-        }
-        LocalDateTime time = LocalDateTime.now();
-        if (bookingDto.getStart().isBefore(time) || bookingDto.getEnd().isBefore(time)
-                || bookingDto.getStart().isAfter(bookingDto.getEnd())) {
-            throw new BadRequestException(String.format("Incorrect dates."));
-        }
-    }
-
-    private BookingStatus checkStatus(String status) {
-        try {
-            return BookingStatus.valueOf(status);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentExceptionCustom(String.format("Unknown state: %s", status));
         }
     }
 }

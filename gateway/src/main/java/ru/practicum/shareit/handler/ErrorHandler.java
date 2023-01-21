@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.handler.exception.BadRequestException;
 import ru.practicum.shareit.handler.exception.IllegalArgumentExceptionCustom;
 
 import javax.validation.ConstraintViolationException;
@@ -18,6 +19,13 @@ public class ErrorHandler {
     public ErrorResponse handleIllegalArgumentExceptionCustom(IllegalArgumentExceptionCustom e) {
         String error = "Unknown state: UNSUPPORTED_STATUS";
         return new ErrorResponse(error);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public ErrorResponse handleBadRequestException(BadRequestException e) {
+        log.info("Error 400 {}", e.getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler

@@ -9,7 +9,6 @@ import ru.practicum.shareit.common.CustomPageRequest;
 import ru.practicum.shareit.handler.exception.BadRequestException;
 import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.handler.exception.OwnerException;
-import ru.practicum.shareit.handler.exception.ValidationException;
 import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -157,20 +156,6 @@ class ItemServiceImplTest {
         Collection<ItemDto> items = itemService.searchItem("book", 1, 1);
 
         assertEquals(1, items.size());
-    }
-
-    @Test
-    void checkItemValid_whenItemNameIsEmpty_thenRetrunException() {
-        itemDto.setName("");
-        when(userService.getByIdOrNotFoundError(any())).thenReturn(user);
-
-        ValidationException validationException = assertThrows(ValidationException.class,
-                () -> itemService.addItem(user.getId(), itemDto));
-
-        verify(itemRepository, never()).save(ItemMapper.toItem(itemDto, user));
-        assertEquals(String.format("Validation error itemDto name: %s description: %s available:" +
-                        " %b", itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable()),
-                validationException.getMessage());
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
+import ru.practicum.shareit.handler.exception.BadRequestException;
 import ru.practicum.shareit.handler.exception.IllegalArgumentExceptionCustom;
 
 import javax.validation.Valid;
@@ -38,6 +39,7 @@ public class BookingController {
     public ResponseEntity<Object> createBooking(@RequestHeader("X-Sharer-User-Id") long userId,
                                                 @RequestBody @Valid BookItemRequestDto requestDto) {
         log.info("Creating booking {}, userId={}", requestDto, userId);
+        checkBooking(requestDto);
         return bookingClient.createBooking(userId, requestDto);
     }
 
@@ -64,5 +66,11 @@ public class BookingController {
                 .orElseThrow(() -> new IllegalArgumentExceptionCustom("Unknown state: " + stateParam));
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
         return bookingClient.getBookingsByOwner(userId, state, from, size);
+    }
+
+    private void checkBooking(BookItemRequestDto bookItemRequestDto) {
+        if (bookItemRequestDto.getEnd().isBefore(bookItemRequestDto.getStart())) {
+            throw new BadRequestException(String.format("Incorrect dates."));
+        }
     }
 }

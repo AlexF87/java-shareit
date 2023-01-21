@@ -13,7 +13,6 @@ import ru.practicum.shareit.common.CustomPageRequest;
 import ru.practicum.shareit.handler.exception.BadRequestException;
 import ru.practicum.shareit.handler.exception.NotFoundException;
 import ru.practicum.shareit.handler.exception.OwnerException;
-import ru.practicum.shareit.handler.exception.ValidationException;
 import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.*;
@@ -45,8 +44,6 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto addItem(Long userId, ItemDto itemDto) {
         User user = userService.getByIdOrNotFoundError(userId);
         Item item = ItemMapper.toItem(itemDto, user);
-        checkItemValid(itemDto);
-
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
@@ -122,14 +119,6 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository
                 .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text, pageable)
                 .stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
-    }
-
-    private void checkItemValid(ItemDto itemDto) {
-        if (itemDto.getName() == null || itemDto.getName().isEmpty() || itemDto.getDescription() == null ||
-                itemDto.getDescription().isEmpty() || itemDto.getAvailable() == null) {
-            throw new ValidationException(String.format("Validation error itemDto name: %s description: %s available:" +
-                    " %b", itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable()));
-        }
     }
 
     @Override

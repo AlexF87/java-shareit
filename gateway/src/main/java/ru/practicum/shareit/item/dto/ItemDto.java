@@ -14,8 +14,10 @@ import java.util.List;
 public class ItemDto {
     private long id;
     @NotBlank
+    @NotNull
     private String name;
     @NotBlank
+    @NotNull
     private String description;
     @NotNull
     private Boolean available;
